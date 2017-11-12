@@ -32,20 +32,24 @@ function sendMessageToBotUser(address, message) {
       text: message
     }
   };
-  request({
-    method: 'POST',
-    url: DIRECTLINE_URL + 'conversations/' + address.conversation.id + '/activities',
-    headers: {
-      Authorization: `Bearer ${DIRECTLINE_SECRET}`,
-      "Content-Type": "application/json"
-    },
-    body: payload,
-    json: true
-  }, (err, result, body) => {
-    if (err) {
-      console.log('Error');
-    }
-  })
+  createConversation((conversationId) => {
+    request({
+      method: 'POST',
+      url: DIRECTLINE_URL + 'conversations/' + conversationId + '/activities',
+      headers: {
+        Authorization: `Bearer ${DIRECTLINE_SECRET}`,
+        "Content-Type": "application/json"
+      },
+      body: payload,
+      json: true
+    }, (err, result, body) => {
+      if (err) {
+        console.log('Error');
+      }
+    })
+  });
+
+  
 }
 
 
@@ -227,5 +231,22 @@ function addSubscriberToPatient(address, patientId) {
   const patientRef = firebaseDb.ref('patients/' + patientId + '/relativesSubscribed');
   patientRef.push({
     address
+  });
+}
+
+
+/*
+Directline: Create conversation
+*/
+let createConversation = (cb) => {
+  request({
+    method: 'POST',
+    url: `${DIRECTLINE_URL}/conversations`,
+    headers: {
+      Authorization: `Bearer ${DIRECTLINE_SECRET}`
+    }
+  }, (err, resp, body) => {
+    if(err) return console.log(err);
+    cb(resp.conversationId);
   });
 }
