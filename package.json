@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "firebase-admin": "^5.5.0",
-    "restify": "^6.3.2"
+    "restify": "^6.3.2",
+    "request": "latest"
   }
 }
